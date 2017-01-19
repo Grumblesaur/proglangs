@@ -24,7 +24,7 @@
 "print"         {return PRINT;}
 "input"         {return INPUT;}
 
-[a-zA-Z]+       {return IDENT;}
+[a-zA-Z_]+[0-9]*[a-zA-Z_]*     {return IDENT;}
 [0-9]*\.?[0-9]+ {return VALUE;}
 
 "+"             {return PLUS; }
