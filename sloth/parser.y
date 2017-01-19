@@ -8,6 +8,8 @@ double result = 0;
 
 %}
 
+%error-verbose
+
 %union {
 	double value;
 }
@@ -52,8 +54,24 @@ double result = 0;
 
 %%
 
+stmt: expr SCOLN {result = $1; return 0;}
+	| expr 
 
-/* grammar rules TODO */
+expr: expr PLUS term {$$ = $1 + $3;}
+	| expr MINUS term {$$ + $1 - $3;}
+	| term {$$ = $1;}
+
+term: term SPLAT factor {$$ = $1 * $3;}
+	| term SLASH factor {$$ = $1 / $3;}
+	| factor {$$ = $1;}
+
+factor: VALUE {$$ = $1;}
+	| OPPAR expr CLPAR {$$ = $2;}
+
+loop: WHILE expr DO BEGIN stmt END
+
+if-stmt: IF expr THEN stmt
+	| IF expr THEN stmt ELSE stmt
 
 
 %%

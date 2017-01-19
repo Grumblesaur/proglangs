@@ -1,29 +1,33 @@
 %{
+/*  James Murphy
+	CPSC 401 / Programming Languages
+	sloth interpreter / lexer file
+*/
+
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include "codes.h"
-
 %}
 
 %option noyywrap
 
 %%
 "begin"         {return START;}
-"end"           {return END;}
-"if"            {return IF;}
-"then"          {return THEN;}
-"else"          {return ELSE;}
+"end"           {return END;  }
+"if"            {return IF;   }
+"then"          {return THEN; }
+"else"          {return ELSE; }
 "while"         {return WHILE;}
-"do"            {return DO;}
+"do"            {return DO;   }
 "print"         {return PRINT;}
 "input"         {return INPUT;}
 
 [a-zA-Z]+       {return IDENT;}
 [0-9]*\.?[0-9]+ {return VALUE;}
 
-"+"             {return PLUS;}
+"+"             {return PLUS; }
 "-"             {return MINUS;}
 "*"             {return SPLAT;}
 "/"             {return SLASH;}
@@ -34,9 +38,9 @@
 ">="            {return GTEQL;}
 "=="            {return EQUAL;}
 "!="            {return NOTEQ;}
-"&&"            {return AND;}
-"||"            {return OR;}
-"!"             {return BANG;}
+"&&"            {return AND;  }
+"||"            {return OR;   }
+"!"             {return BANG; }
 
 ";"             {return SCOLN;}
 ":="            {return SETEQ;}
