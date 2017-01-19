@@ -1,7 +1,7 @@
 all: lexer
 
-lex.yy.c: sloth_lexer.l
-	flex sloth_lexer.l
+lex.yy.c: lexer.l codes.h
+	flex lexer.l
 
 lexer: lex.yy.c
 	gcc lex.yy.c -o lexer
