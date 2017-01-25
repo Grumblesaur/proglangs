@@ -8,7 +8,8 @@ double result = 0;
 
 %}
 
-%error-verbose
+%define parse.error verbose
+%define parse.lac full
 
 %union {
 	double value;
@@ -51,18 +52,37 @@ double result = 0;
 
 %%
 
-program: stmts {}
+program: stmts {Node * head}
+	| 
+	;
+
+stmts: stmt SCOLN stmts {}
 	|
 	;
 
-stmt: stmt + stmts {}
-stmts: stmt + stmts {}
-	|
-	;
+stmt: assignment {}
+	| output {}
+	| conditional {}
+	| loop {}
+
+sequence: START stmts END;
+
+output: PRINT expr SCOLN
+
+assignment: IDENT SETEQ expr {};
+
+conditional: IF expr THEN option {}
+	| IF expr THEN option ELSE option
+
+option: stmt
+	| sequence
+
+loop: WHILE expr DO START stmt END {}
 
 expr: expr PLUS term {}
 	| expr MINUS term {}
 	| term {}
+	| INPUT {}
 
 term: term TIMES factor {}
 	| term DIVIDE factor {}
@@ -71,12 +91,12 @@ term: term TIMES factor {}
 factor: VALUE {}
 	| OPPAR expr CLPAR {}
 
-loop: WHILE expr DO START stmt END {}
-
-if-stmt: IF expr THEN stmt
-	| IF expr THEN stmt ELSE stmt
-
-
 %%
 
+void yyerror(const char * str) {
+	fprintf(stderr, "Bad syntax: '%s'\n", str);
+}
 
+int main() {
+	yyparse();
+}
