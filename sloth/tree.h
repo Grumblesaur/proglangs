@@ -9,7 +9,7 @@ struct Node {
 	double value;
 	char id[ID_SIZE];
 	int num_children;
-	struct Node * children[MAX_CHILDREN]
+	struct Node * children[MAX_CHILDREN];
 };
 
 struct Node * make_node(int, double, char*);

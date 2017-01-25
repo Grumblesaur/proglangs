@@ -75,7 +75,7 @@ conditional: IF expr THEN option {}
 option: stmt
 	| sequence
 
-loop: WHILE expr DO START stmt END {}
+loop: WHILE expr DO option {}
 
 expr: expr PLUS term {}
 	| expr MINUS term {}
@@ -95,6 +95,12 @@ void yyerror(const char * str) {
 	fprintf(stderr, "Bad syntax: '%s'\n", str);
 }
 
+int yywrap() {
+	return 1;
+}
+
 int main() {
 	yyparse();
+	printf("parse completed");
+	return 0;
 }
