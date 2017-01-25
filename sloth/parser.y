@@ -1,6 +1,6 @@
 %{
 #include <stdio.h>
-#include "codes.h"
+#include "tree.h"
 
 int yywrap();
 void yyerror(const char * str);
@@ -19,8 +19,8 @@ double result = 0;
 
 %token PLUS
 %token MINUS
-%token SLASH
-%token SPLAT
+%token DIVIDE
+%token TIMES
 
 %token LTHAN
 %token GTHAN
@@ -49,28 +49,29 @@ double result = 0;
 %token PRINT
 %token INPUT
 
-
-
-
 %%
 
-program:
+program: stmts {}
+	|
+	;
 
-stmt: expr SCOLN {result = $1; return 0;}
-	| expr 
+stmt: stmt + stmts {}
+stmts: stmt + stmts {}
+	|
+	;
 
-expr: expr PLUS term {$$ = $1 + $3;}
-	| expr MINUS term {$$ + $1 - $3;}
-	| term {$$ = $1;}
+expr: expr PLUS term {}
+	| expr MINUS term {}
+	| term {}
 
-term: term SPLAT factor {$$ = $1 * $3;}
-	| term SLASH factor {$$ = $1 / $3;}
-	| factor {$$ = $1;}
+term: term TIMES factor {}
+	| term DIVIDE factor {}
+	| factor {}
 
-factor: VALUE {$$ = $1;}
-	| OPPAR expr CLPAR {$$ = $2;}
+factor: VALUE {}
+	| OPPAR expr CLPAR {}
 
-loop: WHILE expr DO START stmt END
+loop: WHILE expr DO START stmt END {}
 
 if-stmt: IF expr THEN stmt
 	| IF expr THEN stmt ELSE stmt

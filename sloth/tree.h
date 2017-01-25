@@ -14,6 +14,6 @@ struct Node {
 
 struct Node * make_node(int, double, char*);
 void attach_node(struct Node*, struct Node*);
-
+void print_tree(struct Node* node, int tabs);
 
 #endif

@@ -29,8 +29,8 @@
 
 "+"             {return PLUS; }
 "-"             {return MINUS;}
-"*"             {return SPLAT;}
-"/"             {return SLASH;}
+"*"             {return TIMES;}
+"/"             {return DIVIDE;}
 
 "<"             {return LTHAN;}
 ">"             {return GTHAN;}

@@ -8,8 +8,8 @@
 /* Arithmetic operators */
 #define PLUS  102
 #define MINUS 103
-#define SLASH 104
-#define SPLAT 105
+#define DIVIDE 104
+#define TIMES 105
 
 /* Comparison Operators */
 #define LTHAN 106
