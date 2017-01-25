@@ -54,6 +54,8 @@ double result = 0;
 
 %%
 
+program:
+
 stmt: expr SCOLN {result = $1; return 0;}
 	| expr 
 
@@ -68,7 +70,7 @@ term: term SPLAT factor {$$ = $1 * $3;}
 factor: VALUE {$$ = $1;}
 	| OPPAR expr CLPAR {$$ = $2;}
 
-loop: WHILE expr DO BEGIN stmt END
+loop: WHILE expr DO START stmt END
 
 if-stmt: IF expr THEN stmt
 	| IF expr THEN stmt ELSE stmt
