@@ -52,12 +52,10 @@ double result = 0;
 
 %%
 
-program: stmts {Node * head}
-	| 
-	;
+program: stmts {}
 
 stmts: stmt SCOLN stmts {}
-	|
+	| %empty
 	;
 
 stmt: assignment {}
