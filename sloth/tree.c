@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "tree.h"
-#include "codes.h"
+#include "parser.tab.h"
 
 /* create a new node */
 struct Node * make_node(int type, double value, char * id) {
@@ -54,7 +54,7 @@ void print_tree(struct Node * node, int tabs) {
 		case WHILE: printf("WHILE:\n"); break;
 		case PRINT: printf("PRINT:\n"); break;
 		case INPUT: printf("INPUT:\n"); break;
-		case STMNT: printf("STMNT:\n"); break;
+		case STMT: printf("STMNT:\n"); break;
 		default:
 			printf("Error, %d not a valid node type.\n", node->type);
 			exit(1);

@@ -9,7 +9,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include "parser.tab.h"
-#include "codes.h"
 
 %}
 
