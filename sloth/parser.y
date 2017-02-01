@@ -24,20 +24,15 @@ struct Node * result;
 %token SCOLN SETEQ OPPAR CLPAR
 %token START END IF THEN ELSE WHILE DO
 %token PRINT INPUT
-%token STMTS
+%token STMTS STMT
 
 %precedence THEN
 %precedence ELSE
 
-%type <node> program stmts stmt expr id orterm andterm compterm addterm
-	factor notterm assignment while print sequence conditional ifelse
+%type <node> program stmts stmt expr orterm andterm compterm addterm
+	factor notterm
 
 %%
-
-id:
-	IDENT {
-		$$ = make_node(IDENT, 0, $1);
-	}
 
 program:
 	stmts {
@@ -51,66 +46,39 @@ stmts:
 		attach_node($$, $1);
 		attach_node($$, $2);
 	}
-	| stmt {}
+	| stmt {
+		$$ = make_node(STMT, 0, "");
+		attach_node($$, $1);
+	}
 
-stmt: 
-	conditional {
-		
-	}
-	| ifelse {
-		
-	}
-	| assignment {
-		
-	}
-	| while {
-		$$ = make_node(WHILE, 0, "");
-	}
-	| print {
-		$$ = make_node(PRINT, 0, "");
-	}
-	| sequence {
-		$$ = make_node(STMTS, 0, "");
-	}
-	
-conditional:
+stmt: 	
 	IF expr THEN stmt {
 		$$ = make_node(IF, 0, "");
 		attach_node($$, $2);
 		attach_node($$, $4);
 	}
-
-ifelse:
-	IF expr THEN stmt ELSE stmt {
+	| IF expr THEN stmt ELSE stmt {
 		$$ = make_node(IF, 0, "");
 		attach_node($$, $2);
 		attach_node($$, $4);
 		attach_node($$, $6);
 	}
-
-assignment:
-	IDENT SETEQ expr SCOLN {
+	| IDENT SETEQ expr SCOLN {
 		$$ = make_node(SETEQ, 0, "");
-		attach_node($$, $1);
+		//attach_node($$, $1);
 		attach_node($$, $3);
 	}
-
-while:
-	WHILE expr DO stmt {
-		$$ = make_node(WHILE);
+	| WHILE expr DO stmt {
+		$$ = make_node(WHILE, 0, "");
 		attach_node($$, $2);
 		attach_node($$, $4);
 	}
-
-print:
-	PRINT expr SCOLN {
+	| PRINT expr SCOLN {
 		$$ = make_node(PRINT, 0, "");
 		attach_node($$, $2);
 	}
-
-sequence:
-	START stmts END {
-		$$ = make_node(STMT);
+	| START stmts END {
+		$$ = make_node(STMT, 0, "");
 		attach_node($$, $2);
 	}
 
@@ -142,7 +110,7 @@ andterm:
 		attach_node($$, $3);
 	}
 	| andterm LTEQL compterm {
-		$$ = make_node(LTEQL);
+		$$ = make_node(LTEQL, 0, "");
 		attach_node($$, $1);
 		attach_node($$, $3);
 	}
