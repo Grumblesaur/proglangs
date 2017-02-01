@@ -54,13 +54,24 @@ stmts:
 	| stmt {}
 
 stmt: 
-	conditional {}
-	| ifelse {}
-	| assignment {
+	conditional {
+		
 	}
-	| while {}
-	| print {}
-	| sequence {}
+	| ifelse {
+		
+	}
+	| assignment {
+		
+	}
+	| while {
+		$$ = make_node(WHILE, 0, "");
+	}
+	| print {
+		$$ = make_node(PRINT, 0, "");
+	}
+	| sequence {
+		$$ = make_node(STMTS, 0, "");
+	}
 	
 conditional:
 	IF expr THEN stmt {
