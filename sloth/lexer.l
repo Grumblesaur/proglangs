@@ -26,8 +26,8 @@
 "print"         {return PRINT;}
 "input"         {return INPUT;}
 
-[a-zA-Z_]+[0-9]*[a-zA-Z_]*     {return IDENT;}
-[0-9]*\.?[0-9]+ {return VALUE;}
+[a-zA-Z_]+[0-9]*[a-zA-Z_]*     {yylval.var = yytext; return IDENT;}
+[0-9]*\.?[0-9]+ {yylval.value = atof(yytext); return VALUE;}
 
 "+"             {return PLUS; }
 "-"             {return MINUS;}

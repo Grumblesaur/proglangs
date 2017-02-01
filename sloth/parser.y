@@ -1,6 +1,7 @@
 %{
 #include <stdio.h>
 #include "tree.h"
+#define CHILDREN attach_node($$, $1); attach_node($$, $3);
 
 int yywrap();
 void yyerror(const char * str);
@@ -8,49 +9,29 @@ double result = 0;
 
 %}
 
-%define parse.error verbose
-%define parse.lac full
+%error-verbose
 
 %union {
 	double value;
+	char * var;
+	struct Node * node;
 }
 
-%token IDENT
+%token <var> IDENT
 %token <value> VALUE
+%token PLUS MINUS DIVIDE TIMES
+%token LTHAN GTHAN LTEQL GTEQL EQUAL NOTEQ
+%token AND OR NOT
+%token SCOLN SETEQ OPPAR CLPAR
+%token START END IF THEN ELSE WHILE DO
+%token PRINT INPUT
 
-%token PLUS
-%token MINUS
-%token DIVIDE
-%token TIMES
-
-%token LTHAN
-%token GTHAN
-%token LTEQL
-%token GTEQL
-%token EQUAL
-%token NOTEQ
-
-%token AND
-%token OR
-%token NOT
-
-%token SCOLN
-%token SETEQ
-%token OPPAR
-%token CLPAR
-
-%token START
-%token END
-%token IF
-%token THEN
-%token ELSE
-%token WHILE
-%token DO
-
-%token PRINT
-%token INPUT
+%type <node> program stmts stmt expr id orterm andterm compterm addterm
+	factor notterm assignment while
 
 %%
+
+id: IDENT {}
 
 program: stmts {}
 
@@ -64,47 +45,70 @@ stmt: conditional {}
 	| print {}
 	| sequence {}
 	
-conditional: IF predicate THEN stmt {}
+conditional: IF expr THEN stmt {}
 
-ifelse: IF predicate THEN stmt ELSE stmt {}
+ifelse: IF expr THEN stmt ELSE stmt {}
 
-assignment: IDENT SETEQ predicate SCOLN {}
+assignment:
+	IDENT SETEQ expr SCOLN {
+		$$ = make_node(SETEQ, 0 "");
+		attach_node($$, $1);
+		attach_node($$, $3);
+	}
 
-while: WHILE predicate DO stmt {}
+while:
+	WHILE expr DO stmt {
+		$$ = make_node(WHILE);
+		CHILDREN	
+	}
 
-print: PRINT predicate SCOLN {}
+print: PRINT expr SCOLN {}
 
-sequence: START stmts END
+sequence: START stmts END {}
 
-predicate: expr AND expr {}
-	| expr OR expr {}
-	| expr
+expr:
+	expr OR orterm {
+		$$ = make_node(OR, 0, "");
+		attach_node($$, $1);
+		attach_node($$, $3);
+	}
+	| orterm {}
 
-expr: comp {}
-	| addsub {}
-	| term {}
+orterm:
+	orterm AND andterm {
+		$$ = make_node(AND, 0, "");
+		attach_node($$, $1);
+		attach_node($$, $3);
+	}
+	| andterm {}
+
+andterm:
+	andterm LTHAN compterm {}
+	| andterm GTHAN compterm {}
+	| andterm LTEQL compterm {}
+	| andterm GTEQL compterm {}
+	| andterm EQUAL compterm {}
+	| andterm NOTEQ compterm {}
+	| compterm {}
+
+compterm:
+	compterm PLUS addterm {}
+	| compterm MINUS addterm {}
+	| addterm {}
+
+addterm:
+	addterm TIMES factor {}
+	| addterm DIVIDE factor {}
 	| factor {}
 
-comp: term LTHAN term {}
-	| term GTHAN term {}
-	| term LTEQL term {}
-	| term GTEQL term {}
-	| term EQUAL term {}
-	| term NOTEQ term {}
+factor:
+	NOT notterm {}
+	| notterm {}
 
-addsub: term PLUS term {}
-	| term MINUS term {}
-
-term: inverse {}
-	| factor TIMES factor {}
-	| factor DIVIDE factor {}
-	| factor
-
-inverse: NOT factor {}
-
-factor: IDENT {}
-	| VALUE {}
-	| OPPAR expr CLPAR {}
+notterm:
+	IDENT {$$ = make_node(IDENT, 0, $1);}
+	| VALUE {$$ = make_node(VALUE, $1, "");}
+	| INPUT {$$ = make_node(INPUT, 0, "");}
 
 %%
 
@@ -116,7 +120,8 @@ int yywrap() {
 	return 1;
 }
 
-int main() {
+int main(int argc, char * argv[]) {
+	stdin = fopen(argv[1], "r");
 	yyparse();
 	printf("parse completed");
 	return 0;
