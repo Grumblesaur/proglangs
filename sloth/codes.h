@@ -43,4 +43,6 @@
 #define PRINT 126
 #define INPUT 127
 
+#define STMNT 128
+
 #endif

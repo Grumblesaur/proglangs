@@ -1,8 +1,13 @@
+#include <stdio.h>
+#include <unistd.h>
+#include <string.h>
+#include <stdlib.h>
+#include <assert.h>
 #include "tree.h"
 #include "codes.h"
 
 /* create a new node */
-struct Node * make_node(int type, doublevalue, char * id) {
+struct Node * make_node(int type, double value, char * id) {
 	int i;
 	struct Node * node = (struct Node *) malloc(sizeof(struct Node));
 	node->type = type;
