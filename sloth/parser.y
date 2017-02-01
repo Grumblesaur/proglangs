@@ -32,7 +32,7 @@ double result = 0;
 
 %token AND
 %token OR
-%token BANG
+%token NOT
 
 %token SCOLN
 %token SETEQ
@@ -54,39 +54,56 @@ double result = 0;
 
 program: stmts {}
 
-stmts: stmt SCOLN stmts {}
-	| %empty
-	;
+stmts: stmt stmts {}
+	| stmt {}
 
-stmt: assignment {}
-	| output {}
-	| conditional {}
-	| loop {}
+stmt: conditional {}
+	| ifelse {}
+	| assignment {}
+	| while {}
+	| print {}
+	| sequence {}
+	
+conditional: IF predicate THEN stmt {}
 
-sequence: START stmts END;
+ifelse: IF predicate THEN stmt ELSE stmt {}
 
-output: PRINT expr SCOLN
+assignment: IDENT SETEQ predicate SCOLN {}
 
-assignment: IDENT SETEQ expr {};
+while: WHILE predicate DO stmt {}
 
-conditional: IF expr THEN option {}
-	| IF expr THEN option ELSE option
+print: PRINT predicate SCOLN {}
 
-option: stmt
-	| sequence
+sequence: START stmts END
 
-loop: WHILE expr DO option {}
+predicate: expr AND expr {}
+	| expr OR expr {}
+	| expr
 
-expr: expr PLUS term {}
-	| expr MINUS term {}
+expr: comp {}
+	| addsub {}
 	| term {}
-	| INPUT {}
-
-term: term TIMES factor {}
-	| term DIVIDE factor {}
 	| factor {}
 
-factor: VALUE {}
+comp: term LTHAN term {}
+	| term GTHAN term {}
+	| term LTEQL term {}
+	| term GTEQL term {}
+	| term EQUAL term {}
+	| term NOTEQ term {}
+
+addsub: term PLUS term {}
+	| term MINUS term {}
+
+term: inverse {}
+	| factor TIMES factor {}
+	| factor DIVIDE factor {}
+	| factor
+
+inverse: NOT factor {}
+
+factor: IDENT {}
+	| VALUE {}
 	| OPPAR expr CLPAR {}
 
 %%

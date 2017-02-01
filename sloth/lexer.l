@@ -42,7 +42,7 @@
 "!="            {return NOTEQ;}
 "&&"            {return AND;  }
 "||"            {return OR;   }
-"!"             {return BANG; }
+"!"             {return NOT;  }
 
 ";"             {return SCOLN;}
 ":="            {return SETEQ;}

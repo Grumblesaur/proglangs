@@ -9,3 +9,5 @@ lex.yy.c: lexer.l codes.h parser.tab.h
 
 lexer: lex.yy.c
 	gcc lex.yy.c -o lexer
+clean:
+	rm analyzer lexer parser.tab.* lex.yy.c

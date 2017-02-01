@@ -22,7 +22,7 @@
 /* Logical Operators */
 #define AND   112
 #define OR    113
-#define BANG  114
+#define NOT   114
 
 /* Structural Components */
 #define SCOLN 115
