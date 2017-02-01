@@ -52,7 +52,7 @@ double result = 0;
 
 %%
 
-program: stmts {Node * head}
+program: stmts {Node * head;}
 	| 
 	;
 
