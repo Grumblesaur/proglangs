@@ -8,7 +8,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include "parser.tab.h"
 #include "codes.h"
+
 %}
 
 %option noyywrap
@@ -51,7 +53,7 @@
 [ \t\n]+        {/* whitespace -- do nothing */}
 
 %%
-
+/*
 int main(int argc, char ** argv) {
 	if (argc > 1) {
 		struct stat buffer;
@@ -72,3 +74,4 @@ int main(int argc, char ** argv) {
 	
 	return 0;
 }
+*/
