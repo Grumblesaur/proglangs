@@ -1,11 +1,10 @@
 %{
 #include <stdio.h>
 #include "tree.h"
-#define CHILDREN attach_node($$, $1); attach_node($$, $3);
 
 int yywrap();
 void yyerror(const char * str);
-double result = 0;
+struct Node * result;
 
 %}
 
@@ -25,33 +24,62 @@ double result = 0;
 %token SCOLN SETEQ OPPAR CLPAR
 %token START END IF THEN ELSE WHILE DO
 %token PRINT INPUT
+%token STMTS
+
+%precedence THEN
+%precedence ELSE
 
 %type <node> program stmts stmt expr id orterm andterm compterm addterm
-	factor notterm assignment while
+	factor notterm assignment while print sequence conditional ifelse
 
 %%
 
-id: IDENT {}
+id:
+	IDENT {
+		$$ = make_node(IDENT, 0, $1);
+	}
 
-program: stmts {}
+program:
+	stmts {
+		result = make_node(STMTS, 0, "");
+		attach_node(result, $1);
+	}
 
-stmts: stmt stmts {}
+stmts:
+	stmt stmts {
+		$$ = make_node(STMTS, 0, "");
+		attach_node($$, $1);
+		attach_node($$, $2);
+	}
 	| stmt {}
 
-stmt: conditional {}
+stmt: 
+	conditional {}
 	| ifelse {}
-	| assignment {}
+	| assignment {
+	}
 	| while {}
 	| print {}
 	| sequence {}
 	
-conditional: IF expr THEN stmt {}
+conditional:
+	IF expr THEN stmt {
+		$$ = make_node(IF, 0, "");
+		attach_node($$, $2);
+		attach_node($$, $4);
+	}
 
-ifelse: IF expr THEN stmt ELSE stmt {}
+ifelse:
+	IF expr THEN stmt ELSE stmt {
+		$$ = make_node(IF, 0, "");
+		attach_node($$, $2);
+		attach_node($$, $4);
+		attach_node($$, $6);
+	}
 
 assignment:
 	IDENT SETEQ expr SCOLN {
-		$$ = make_node(SETEQ, 0 "");
+		$$ = make_node(SETEQ, 0, "");
 		attach_node($$, $1);
 		attach_node($$, $3);
 	}
@@ -59,12 +87,21 @@ assignment:
 while:
 	WHILE expr DO stmt {
 		$$ = make_node(WHILE);
-		CHILDREN	
+		attach_node($$, $2);
+		attach_node($$, $4);
 	}
 
-print: PRINT expr SCOLN {}
+print:
+	PRINT expr SCOLN {
+		$$ = make_node(PRINT, 0, "");
+		attach_node($$, $2);
+	}
 
-sequence: START stmts END {}
+sequence:
+	START stmts END {
+		$$ = make_node(STMT);
+		attach_node($$, $2);
+	}
 
 expr:
 	expr OR orterm {
@@ -83,26 +120,69 @@ orterm:
 	| andterm {}
 
 andterm:
-	andterm LTHAN compterm {}
-	| andterm GTHAN compterm {}
-	| andterm LTEQL compterm {}
-	| andterm GTEQL compterm {}
-	| andterm EQUAL compterm {}
-	| andterm NOTEQ compterm {}
+	andterm LTHAN compterm {
+		$$ = make_node(LTHAN, 0, "");
+		attach_node($$, $1);
+		attach_node($$, $3);
+	}
+	| andterm GTHAN compterm {
+		$$ = make_node(GTHAN, 0, "");
+		attach_node($$, $1);
+		attach_node($$, $3);
+	}
+	| andterm LTEQL compterm {
+		$$ = make_node(LTEQL);
+		attach_node($$, $1);
+		attach_node($$, $3);
+	}
+	| andterm GTEQL compterm {
+		$$ = make_node(GTEQL, 0 , "");
+		attach_node($$, $1);
+		attach_node($$, $3);
+	}
+	| andterm EQUAL compterm {
+		$$ = make_node(EQUAL, 0, "");
+		attach_node($$, $1);
+		attach_node($$, $3);
+	}
+	| andterm NOTEQ compterm {
+		$$ = make_node(NOTEQ, 0 , "");
+		attach_node($$, $1);
+		attach_node($$, $3);
+	}
 	| compterm {}
 
 compterm:
-	compterm PLUS addterm {}
-	| compterm MINUS addterm {}
+	compterm PLUS addterm {
+		$$ = make_node(PLUS, 0 , "");
+		attach_node($$, $1);
+		attach_node($$, $3);
+	}
+	| compterm MINUS addterm {
+		$$ = make_node(MINUS, 0, "");
+		attach_node($$, $1);
+		attach_node($$, $3);
+	}
 	| addterm {}
 
 addterm:
-	addterm TIMES factor {}
-	| addterm DIVIDE factor {}
+	addterm TIMES factor {
+		$$ = make_node(TIMES, 0, "");
+		attach_node($$, $1);
+		attach_node($$, $3);
+	}
+	| addterm DIVIDE factor {
+		$$ = make_node(DIVIDE, 0, "");
+		attach_node($$, $1);
+		attach_node($$, $3);
+	}
 	| factor {}
 
 factor:
-	NOT notterm {}
+	NOT notterm {
+		$$ = make_node(NOT, 0, "");
+		attach_node($$, $2);
+	}
 	| notterm {}
 
 notterm:
