@@ -31,113 +31,114 @@ struct Node * result;
 %precedence THEN
 %precedence ELSE
 
-%type <node> program stmts stmt expr orterm andterm compterm addterm factor notterm id
+%type <node> program statements statement expression disjunction
+%type <node> conjunction relation addend factor atom id
 
 %%
 
-program: stmts {
+program: statements {
 		result = make_node(STMT, 0, "");
 		attach_node(result, $1);
 	}
 
-stmts: stmt stmts {
+statements: statement statements {
 		$$ = make_node(STMT, 0, "");
 		attach_node($$, $1);
 		attach_node($$, $2);
-	} | stmt {
+	} | statement {
 		$$ = make_node(STMT, 0, "");
 		attach_node($$, $1);
 	}
 
-stmt: IF expr THEN stmt {
+statement: IF expression THEN statement {
 		$$ = make_node(IF, 0, "");
 		attach_node($$, $2);
 		attach_node($$, $4);
-	} | IF expr THEN stmt ELSE stmt {
+	} | IF expression THEN statement ELSE statement {
 		$$ = make_node(IF, 0, "");
 		attach_node($$, $2);
 		attach_node($$, $4);
 		attach_node($$, $6);
-	} | id SETEQ expr SCOLN {
+	} | id SETEQ expression SCOLN {
 		$$ = make_node(SETEQ, 0, "");
 		attach_node($$, $1);
 		attach_node($$, $3);
-	} | WHILE expr DO stmt {
+	} | WHILE expression DO statement {
 		$$ = make_node(WHILE, 0, "");
 		attach_node($$, $2);
 		attach_node($$, $4);
-	} | PRINT expr SCOLN {
+	} | PRINT expression SCOLN {
 		$$ = make_node(PRINT, 0, "");
 		attach_node($$, $2);
-	} | START stmts END {
+	} | START statements END {
 		$$ = make_node(STMT, 0, "");
 		attach_node($$, $2);
 	}
 
-expr: expr OR orterm {
+expression: expression OR disjunction {
 		$$ = make_node(OR, 0, "");
 		attach_node($$, $1);
 		attach_node($$, $3);
-	} | orterm {}
+	} | disjunction {}
 
-orterm: orterm AND andterm {
+disjunction: disjunction AND conjunction {
 		$$ = make_node(AND, 0, "");
 		attach_node($$, $1);
 		attach_node($$, $3);
-	} | andterm {}
+	} | conjunction {}
 
-andterm: andterm LTHAN compterm {
+conjunction: conjunction LTHAN relation {
 		$$ = make_node(LTHAN, 0, "");
 		attach_node($$, $1);
 		attach_node($$, $3);
-	} | andterm GTHAN compterm {
+	} | conjunction GTHAN relation {
 		$$ = make_node(GTHAN, 0, "");
 		attach_node($$, $1);
 		attach_node($$, $3);
-	} | andterm LTEQL compterm {
+	} | conjunction LTEQL relation {
 		$$ = make_node(LTEQL, 0, "");
 		attach_node($$, $1);
 		attach_node($$, $3);
-	} | andterm GTEQL compterm {
+	} | conjunction GTEQL relation {
 		$$ = make_node(GTEQL, 0 , "");
 		attach_node($$, $1);
 		attach_node($$, $3);
-	} | andterm EQUAL compterm {
+	} | conjunction EQUAL relation {
 		$$ = make_node(EQUAL, 0, "");
 		attach_node($$, $1);
 		attach_node($$, $3);
-	} | andterm NOTEQ compterm {
+	} | conjunction NOTEQ relation {
 		$$ = make_node(NOTEQ, 0 , "");
 		attach_node($$, $1);
 		attach_node($$, $3);
-	} | compterm {}
+	} | relation {}
 
-compterm: compterm PLUS addterm {
+relation: relation PLUS addend {
 		$$ = make_node(PLUS, 0 , "");
 		attach_node($$, $1);
 		attach_node($$, $3);
-	} | compterm MINUS addterm {
+	} | relation MINUS addend {
 		$$ = make_node(MINUS, 0, "");
 		attach_node($$, $1);
 		attach_node($$, $3);
-	} | addterm {}
+	} | addend {}
 
-addterm: addterm TIMES factor {
+addend: addend TIMES factor {
 		$$ = make_node(TIMES, 0, "");
 		attach_node($$, $1);
 		attach_node($$, $3);
-	} | addterm DIVIDE factor {
+	} | addend DIVIDE factor {
 		$$ = make_node(DIVIDE, 0, "");
 		attach_node($$, $1);
 		attach_node($$, $3);
 	} | factor {}
 
-factor: NOT notterm {
+factor: NOT atom {
 		$$ = make_node(NOT, 0, "");
 		attach_node($$, $2);
-	} | notterm {}
+	} | atom {}
 
-notterm: OPPAR expr CLPAR {
+atom: OPPAR expression CLPAR {
 		
 	} | VALUE {
 		$$ = make_node(VALUE, $1, "");
