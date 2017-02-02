@@ -139,7 +139,7 @@ factor: NOT atom {
 	} | atom {}
 
 atom: OPPAR expression CLPAR {
-		
+		$$ = make_node(OPPAR, 0, "");
 	} | VALUE {
 		$$ = make_node(VALUE, $1, "");
 	} | IDENT {
@@ -161,8 +161,10 @@ int yywrap() {
 }
 
 int main(int argc, char * argv[]) {
+	FILE * _stdin = stdin;
 	stdin = fopen(argv[1], "r");
 	yyparse();
+	stdin = _stdin;
 	print_tree(result, 0);
 	return 0;
 }
