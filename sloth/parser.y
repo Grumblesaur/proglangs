@@ -79,7 +79,7 @@ expression: expression OR disjunction {
 		$$ = make_node(OR, 0, "");
 		attach_node($$, $1);
 		attach_node($$, $3);
-	} | disjunction {}
+	} | disjunction {} 
 
 disjunction: disjunction AND conjunction {
 		$$ = make_node(AND, 0, "");
