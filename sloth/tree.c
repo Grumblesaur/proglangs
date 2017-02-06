@@ -49,6 +49,7 @@ void print_tree(struct Node * node, int tabs) {
 		case NOTEQ: printf("NOTEQ:\n"); break;
 		case AND: printf("AND:\n"); break;
 		case OR: printf("OR:\n"); break;
+		case NOT: printf("NOT:\n"); break;
 		case SETEQ: printf("SETEQ:\n"); break;
 		case IF: printf("IF:\n"); break;
 		case WHILE: printf("WHILE:\n"); break;
