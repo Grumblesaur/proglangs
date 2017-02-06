@@ -12,4 +12,4 @@ tree.o: tree.c tree.h
 	gcc -c tree.c
 
 clean:
-	rm parser parser.tab.* lex.yy.c
+	rm parser parser.tab.* lex.yy.c tree.o
