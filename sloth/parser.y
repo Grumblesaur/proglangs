@@ -18,21 +18,27 @@ struct Node * result;
 
 %token <var> IDENT
 %token <value> VALUE
-%token PLUS MINUS 
-%token DIVIDE TIMES
+%token NOT
+%token TIMES DIVIDE
+%token PLUS MINUS
 %token LTHAN GTHAN LTEQL GTEQL EQUAL NOTEQ
 %token AND OR
-%token NOT
-%token SCOLN SETEQ OPPAR CLPAR
-%token START END IF THEN ELSE WHILE DO
-%token PRINT INPUT
-%token STMT
-
+%token SCOLN
+%token SETEQ
+%token OPPAR CLPAR
+%token START
+%token END
+%token IF
 %precedence THEN
 %precedence ELSE
+%token WHILE
+%token DO
+%token PRINT
+%token INPUT
+%token STMT
 
-%type <node> program statements statement expression disjunction
-%type <node> conjunction relation addend factor atom id
+%type <node> program statements statement expression disjunction conjunction
+	relation addend factor atom id
 
 %%
 
@@ -140,6 +146,10 @@ factor: NOT atom {
 
 atom: OPPAR expression CLPAR {
 		$$ = make_node(OPPAR, 0, "");
+		attach_node($$, $2);
+	} | NOT atom {
+		$$ = make_node(NOT, 0, "");
+		attach_node($$, $2);
 	} | VALUE {
 		$$ = make_node(VALUE, $1, "");
 	} | IDENT {
