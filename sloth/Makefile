@@ -1,15 +1,21 @@
-parser: lex.yy.c parser.tab.c tree.o
-	gcc -o parser parser.tab.c lex.yy.c tree.o
+parser: lex.yy.o parser.tab.o tree.o
+	g++ -o parser lex.yy.o parser.tab.o tree.o
+
+lex.yy.o: lex.yy.c
+	gcc -c lex.yy.c
+
+lex.yy.c: lexer.l parser.tab.h
+	flex lexer.l
+
+parser.tab.o: parser.tab.c tree.o
+	gcc -c parser.tab.c
 
 parser.tab.h: parser.tab.c
 parser.tab.c: parser.y
 	bison -d parser.y
 
-lex.yy.c: lexer.l parser.tab.h
-	flex lexer.l
-
-tree.o: tree.c tree.h
+tree.o: tree.h tree.c
 	gcc -c tree.c
 
 clean:
-	rm parser parser.tab.* lex.yy.c tree.o
+	rm lex.yy.c parser.tab.h parser *.o

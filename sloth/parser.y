@@ -3,6 +3,7 @@
 #include "tree.h"
 
 int yywrap();
+int yylex();
 void yyerror(const char * str);
 struct Node * result;
 
@@ -139,16 +140,13 @@ addend: addend TIMES factor {
 		attach_node($$, $3);
 	} | factor {}
 
-factor: NOT atom {
+factor: NOT factor {
 		$$ = make_node(NOT, 0, "");
 		attach_node($$, $2);
 	} | atom {}
 
 atom: OPPAR expression CLPAR {
 		$$ = make_node(OPPAR, 0, "");
-		attach_node($$, $2);
-	} | NOT atom {
-		$$ = make_node(NOT, 0, "");
 		attach_node($$, $2);
 	} | VALUE {
 		$$ = make_node(VALUE, $1, "");
