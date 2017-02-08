@@ -26,7 +26,7 @@ int eval_stmt(struct Node * node) {
 			break;
 		
 		case PRINT:
-			std::cout << eval_expr(node->children[0]) << std::endl;
+			std::cerr << eval_expr(node->children[0]) << std::endl;
 			break;
 		
 		case START:

@@ -21,7 +21,7 @@ parser.tab.c: parser.y
 	bison -d parser.y
 
 tree.o: tree.h tree.c
-	gcc -c tree.c
+	g++ -c tree.c
 
 clean:
 	rm lex.yy.c parser.tab.c parser *.o
