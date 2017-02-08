@@ -1,10 +1,13 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include "parser.tab.h"
 #include "sloth.h"
 #include "tree.h"
 
 std::map<std::string, double> variables;
+
+double eval_expr(struct Node *);
 
 int eval_stmt(struct Node * node) {
 	struct variable v;
@@ -13,7 +16,7 @@ int eval_stmt(struct Node * node) {
 	switch (node->type) {
 		case SETEQ:
 			name = (node->children[0])->id;
-			vars[name] = eval_expr(node->children[1]);
+			variables[name] = eval_expr(node->children[1]);
 			break;
 		
 		case WHILE:
@@ -52,7 +55,7 @@ int eval_stmt(struct Node * node) {
 	return 0;
 }
 
-double eval_stmt(struct Node * node) {
+double eval_expr(struct Node * node) {
 	switch (node->type) {
 		case OR:
 			return (double) eval_expr(node->children[0])
@@ -123,7 +126,7 @@ double eval_stmt(struct Node * node) {
 			break;
 
 		case IDENT:
-			return variables[node->name];
+			return variables[node->id];
 			break;
 
 		case VALUE:
@@ -132,7 +135,8 @@ double eval_stmt(struct Node * node) {
 
 		case INPUT:
 			double d;
-			return d, std::cin >> d;
+			std::cin >> d;
+			return d;
 			break;
 			
 		default:

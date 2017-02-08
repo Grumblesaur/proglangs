@@ -4,6 +4,6 @@
 struct variable {
 	std::string name;
 	double value;
-}
+};
 
-#endif SLOTH_H
+#endif
