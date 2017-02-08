@@ -14,19 +14,25 @@ int eval_stmt(struct Node * node) {
 	std::string name;
 	
 	switch (node->type) {
+		case STMT:
+			for (int i = 0; i < node->num_children; i++) {
+				eval_stmt(node->children[i]);
+			}
+			break;
+			
 		case SETEQ:
 			name = (node->children[0])->id;
 			variables[name] = eval_expr(node->children[1]);
 			break;
 		
 		case WHILE:
-			while (node->children[0] != 0) {
+			while (eval_expr(node->children[0]) != 0) {
 				eval_stmt(node->children[1]);
 			}
 			break;
 		
 		case PRINT:
-			std::cerr << eval_expr(node->children[0]) << std::endl;
+			std::cout << eval_expr(node->children[0]) << std::endl;
 			break;
 		
 		case START:
@@ -37,14 +43,14 @@ int eval_stmt(struct Node * node) {
 			
 		case IF:
 			if (node->num_children == 2) {
-				if (eval_expr(node->children[1])) {
-					eval_stmt(node->children[2]);
+				if (eval_expr(node->children[0])) {
+					eval_stmt(node->children[1]);
 				}
 			} else {
-				if (eval_expr(node->children[1])) {
-					eval_stmt(node->children[2]);
+				if (eval_expr(node->children[0])) {
+					eval_stmt(node->children[1]);
 				} else {
-					eval_stmt(node->children[3]);
+					eval_stmt(node->children[2]);
 				}
 			}
 			break;
